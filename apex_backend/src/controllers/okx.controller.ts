@@ -25,9 +25,9 @@ export const getBalance = async (req: Request, res: Response) => {
       for (let i = 0; i < coinBalance.length; i++) {
             let val = {};
             val = {
-              'currency': coinBalance[i].ccy,
+              'coinName': coinBalance[i].ccy,
               'balance': coinBalance[i].eq,
-              'usdtValue':coinBalance[i].eqUsd,
+              'usdBalance':coinBalance[i].eqUsd,
             }
             response.push(val);
         }
@@ -36,7 +36,7 @@ export const getBalance = async (req: Request, res: Response) => {
         'coins':response,
         'totalBalance':totalBalance
       }
-    res.json(balance);
+    res.json(resVal);
   } catch (err: any) {
     res.status(500).json({ error: err.msg || "Failed to fetch balance" });
   }

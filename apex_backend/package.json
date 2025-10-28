@@ -12,6 +12,7 @@
   "description": "",
   "dependencies": {
     "@safeheron/api-sdk": "^1.0.25",
+    "axios-retry": "^4.5.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
@@ -21,6 +22,7 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "mysql2": "^3.3.2",
+    "node-cron": "^4.2.1",
     "okx-api": "^3.0.6",
     "sequelize": "^6.37.7"
   },

@@ -1,7 +1,18 @@
 import { Request, Response } from "express";
-import { accountApi } from "../services/safeheron.service";
-import {AccountCoinBalanceRequest,AccountCoinBalanceResponse, ListAccountCoinRequest,AccountCoinResponse} from "@safeheron/api-sdk";
+//import { accountApi } from "../services/safeheron.service";
+import dotenv from "dotenv";
+import {AccountApi,AccountCoinBalanceRequest,AccountCoinBalanceResponse, ListAccountCoinRequest,AccountCoinResponse} from "@safeheron/api-sdk";
+dotenv.config();
 
+const API_KEY = process.env.SAFEHERON_API_KEY || "";
+const BASE_URL = process.env.SAFEHERON_API_BASE || "https://api.safeheron.com";
+const accountApi = new AccountApi({
+      baseUrl: BASE_URL,
+      apiKey: API_KEY,
+      rsaPrivateKey: "file:./src/public/private/new-private-4096.pem",
+      safeheronRsaPublicKey: "file:./src/public/public/platform-public-4096.pem",
+      requestTimeout: 60000
+  });
 export const getSafeheronBalance = async (req: Request, res: Response) => {
   
   try {
@@ -23,6 +34,7 @@ export const getSafeheronBalance = async (req: Request, res: Response) => {
 export const accountCoinList = async (req: Request, res: Response) => {
   
   try {
+
       const WALLET_ACCOUNT_KEY = process.env.SAFEHERON_WALLET_ACCOUNT_KEY || "";
       const request: ListAccountCoinRequest = {
           accountKey: WALLET_ACCOUNT_KEY
