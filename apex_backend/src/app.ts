@@ -8,6 +8,8 @@ import { errorHandler } from './middlewares/error.middleware'
 // import { authenticateToken } from './middlewares/auth.middleware';
 import okxRoutes from "./routes/okx.routes";
 import safeheronRoutes from "./routes/safeheron.routes";
+import balanceHistoryRoutes from "./routes/balanceHistory.route";
+import "./crons/dailyBalanceCron.cron";
 
 const app = express();
 
@@ -20,7 +22,7 @@ app.use('/api/v1/auth', authRoutes);
 // app.use('/api/users', authenticateToken, userRoutes);
 app.use("/api/v1/okx", okxRoutes);
 app.use("/api/v1/safeheron", safeheronRoutes);
-
+app.use("/api/v1/balance", balanceHistoryRoutes);
 app.use(errorHandler);
 
 export default app;
