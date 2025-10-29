@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 //import { accountApi } from "../services/safeheron.service";
+import BalanceHistory from "../models/BalanceHistory";
+import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
 import {AccountApi,AccountCoinBalanceRequest,AccountCoinBalanceResponse, ListAccountCoinRequest,AccountCoinResponse} from "@safeheron/api-sdk";
 dotenv.config();
@@ -34,7 +36,19 @@ export const getSafeheronBalance = async (req: Request, res: Response) => {
 export const accountCoinList = async (req: Request, res: Response) => {
   
   try {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split("T")[0];
+    const data:any = await BalanceHistory.findOne({
+      where: { source:"Safeheron", date: yesterdayStr },
+      attributes: [
+        [Sequelize.fn("SUM", Sequelize.col("totalBalance")), "totalBalance"],
+      ],
+      raw: true,
+    });
 
+    const yesterTotalBalance = data?.totalBalance
       const WALLET_ACCOUNT_KEY = process.env.SAFEHERON_WALLET_ACCOUNT_KEY || "";
       const request: ListAccountCoinRequest = {
           accountKey: WALLET_ACCOUNT_KEY
@@ -56,10 +70,18 @@ export const accountCoinList = async (req: Request, res: Response) => {
             }
             response.push(val);
         }
-
+const diff = totalBalance - yesterTotalBalance;
+       const percentage = (diff / yesterTotalBalance) * 100;
+       const status =
+      percentage > 0
+        ? "increase"
+        : percentage < 0
+        ? "decrease"
+        : "no_change";
       let resVal = {
         'coins':response,
-        'totalWalletBalance':totalBalance
+        'totalWalletBalance':totalBalance,
+        'yesterdayStatus':{ percentage: +percentage.toFixed(2), status }
       }
       res.json(resVal);
   } catch (error: any) {
