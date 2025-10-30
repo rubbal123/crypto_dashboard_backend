@@ -10,7 +10,7 @@ import okxRoutes from "./routes/okx.routes";
 import safeheronRoutes from "./routes/safeheron.routes";
 import balanceHistoryRoutes from "./routes/balanceHistory.route";
 import "./crons/dailyBalanceCron.cron";
-
+import "./crons/balanceCron.cron";
 const app = express();
 
 app.use(express.json());

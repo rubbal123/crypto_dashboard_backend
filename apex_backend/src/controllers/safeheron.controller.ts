@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 //import { accountApi } from "../services/safeheron.service";
 import BalanceHistory from "../models/BalanceHistory";
 import { Sequelize } from "sequelize";
+import totalBalance from "../models/totalBalance";
 import dotenv from "dotenv";
 import {AccountApi,AccountCoinBalanceRequest,AccountCoinBalanceResponse, ListAccountCoinRequest,AccountCoinResponse} from "@safeheron/api-sdk";
 dotenv.config();
@@ -34,6 +35,24 @@ export const getSafeheronBalance = async (req: Request, res: Response) => {
 };
 
 export const accountCoinList = async (req: Request, res: Response) => {
+  
+  try {
+  
+   const source = "safeheron";
+  const resVal = await totalBalance.findOne({
+      where: { source }
+    });
+  
+    res.json(resVal);
+  } catch (error: any) {
+    console.error("Safeheron getBalance error:", error);
+    res
+      .status(500)
+      .json({ error: error.message || "Failed to fetch wallet balance" });
+  }
+};
+
+export const accountCoinListCron = async () => {
   
   try {
     const today = new Date();
@@ -70,7 +89,7 @@ export const accountCoinList = async (req: Request, res: Response) => {
             }
             response.push(val);
         }
-const diff = totalBalance - yesterTotalBalance;
+      const diff = totalBalance - yesterTotalBalance;
        const percentage = (diff / yesterTotalBalance) * 100;
        const status =
       percentage > 0
@@ -83,11 +102,12 @@ const diff = totalBalance - yesterTotalBalance;
         'totalWalletBalance':totalBalance,
         'yesterdayStatus':{ percentage: +percentage.toFixed(2), status }
       }
-      res.json(resVal);
+      return resVal;
+     // res.json(resVal);
   } catch (error: any) {
     console.error("Safeheron getBalance error:", error);
-    res
-      .status(500)
-      .json({ error: error.message || "Failed to fetch wallet balance" });
+    //res
+    //  .status(500)
+     // .json({ error: error.message || "Failed to fetch wallet balance" });
   }
 };
