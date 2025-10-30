@@ -3,6 +3,9 @@ import { RestClient } from "okx-api";
 import dotenv from "dotenv";
 import BalanceHistory from "../models/BalanceHistory";
 import { Sequelize } from "sequelize";
+import totalBalance from "../models/totalBalance";
+import axios from "axios";
+import https from "https";
 dotenv.config();
 
 const apiKey = process.env.OKX_API_KEY || "";
@@ -18,6 +21,22 @@ const restClient = new RestClient({
 // ✅ GET /api/okx/balance
 export const getBalance = async (req: Request, res: Response) => {
   try {
+   const httpsAgent = new https.Agent({ keepAlive: true });
+   const source = "okx";
+  const client = axios.create({ httpsAgent });
+  const resVal = await totalBalance.findOne({
+      where: { source }
+    });
+  
+    res.json(resVal);
+  } catch (err: any) {
+    console.log("error",err)
+    res.status(500).json({ error: err.msg || "Failed to fetch balance" });
+  }
+};
+export const getBalanceCron = async () => {
+  try {
+   
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
@@ -59,9 +78,10 @@ export const getBalance = async (req: Request, res: Response) => {
         'totalBalance':totalBalance,
         'yesterdayStatus':{ percentage: +percentage.toFixed(2), status }
       }
-    res.json(resVal);
+      return resVal;
+   
   } catch (err: any) {
-    res.status(500).json({ error: err.msg || "Failed to fetch balance" });
+    console.log("error",err)
+    //res.status(500).json({ error: err.msg || "Failed to fetch balance" });
   }
 };
-
