@@ -1,4 +1,6 @@
 import { sequelize } from "../config/database";
+import BalanceHistory from "./BalanceHistory";
+import totalBalance from "./totalBalance";
 import { User } from "./user.model";
 
 const connectDb = async () => {
@@ -11,4 +13,4 @@ const connectDb = async () => {
   }
 };
 
-export { connectDb, User };
+export { connectDb, User, BalanceHistory, totalBalance };
