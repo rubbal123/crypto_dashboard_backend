@@ -20,6 +20,9 @@ app.use(
       "*", // allow all
       "http://localhost:3000",
       "http://127.0.0.1:3000",
+      "http://localhost:5173",
+      "http://127.0.0.1:5173",
+      "https://crypto-dashboard-alpha-pied.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
